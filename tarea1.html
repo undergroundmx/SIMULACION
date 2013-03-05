@@ -1,0 +1,119 @@
+<!--
+============================
+EQUIPO 2:
+Chávez Verdín José Antonio
+Ruiz López Jesús Amado
+Tolosa Franco César
+============================
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Simulación - Tarea 1</title>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+		google.load("visualization", "1.0", {"packages":["corechart"]});
+		google.load("visualization", "1.0", {"packages":["table"]});
+
+		window.onload = function() {
+			document.getElementById("btn_simular").onclick = function() {
+				validar();
+			}
+			
+			window.onkeyup = function(event) {
+				if (event.which == 13) {
+					validar();
+				}
+			}
+		}
+
+		function validar() {
+			if (document.getElementById("txt_masa").value != "" && document.getElementById("txt_cf").value != "") {
+				var masa = document.getElementById("txt_masa").value;
+				var cf = document.getElementById("txt_cf").value;
+				simularCaidaLibre(masa, cf);
+			}
+			else {
+				alert("Se deben proporcionar todos los datos.");
+			}
+		}
+
+		function simularCaidaLibre(masa, cf) {
+			var tiempo = new Array();
+			var velocidad = new Array();
+			var v = 0.0;
+			for (var t = 0; t<200; t++) {
+				v = ((((9.81)*masa)/cf)*(1-(Math.pow(Math.E, (-(cf/masa)*t)))));
+				tiempo[t] = t;
+				velocidad[t] = v;
+			}
+			dibujarTabla(tiempo, velocidad);
+			dibujarGrafica(tiempo, velocidad);
+		}
+
+		function dibujarTabla(tiempo, velocidad) {
+			var data = new google.visualization.DataTable();
+			data.addColumn("number", "Tiempo");
+			data.addColumn("number", "Velocidad");
+			for (var i=0; i<tiempo.length; i++) {
+				data.addRow([tiempo[i], velocidad[i]]);
+			}
+			var opciones = {"title": "GRAFICA",
+							"width": 300,
+							"height": 700
+							};
+			var grafica = new google.visualization.Table(document.getElementById("tabla"));
+			grafica.draw(data, {showRowNumber: false});
+		}
+
+		function dibujarGrafica(tiempo, velocidad) {
+			var data = new google.visualization.DataTable();
+			data.addColumn("number", "Tiempo");
+			data.addColumn("number", "Velocidad");
+			for (var i=0; i<tiempo.length; i++) {
+				data.addRow([tiempo[i], velocidad[i]]);
+			}
+			var opciones = {"title": "GRAFICA",
+							"width": 900,
+							"height": 700
+							};
+			var grafica = new google.visualization.LineChart(document.getElementById("grafica"));
+			grafica.draw(data, opciones);
+		}
+	</script>
+	<style type="text/css">
+		#main {
+			width: 300px;
+			float: left;	
+		}
+
+		#grafica {
+			width: 900px;
+			margin-left: 300px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Tarea #01 de Simulación</h1>
+	<p>Un paracaidista con masa de 68.1 kg salta de un aerostático fijo.</p>
+	<p>Calcula la velocidad antes que se abra el paracaida, considere un coficiente de resistencia del aire de 12.5 kg/s</p>
+	<hr>
+	<div id="main">
+		<fieldset>
+			<legend align="center"><strong>DATOS DE ENTRADA</strong></legend>
+			<label for="txt_masa">Masa del paracaidista:</label>
+			<br>
+			<input id="txt_masa" type="text" autofocus>
+			<br>
+			<label for="txt_cf">Coeficiente de Fricción:</label>
+			<br>
+			<input id="txt_cf" type="text">
+			<br>
+			<input id="btn_simular" type="button" value="Comenzar">
+		</fieldset>
+		<div id="tabla"></div>
+	</div>
+	<div id="grafica"></div>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!--
+============================
+EQUIPO 2:
+Chávez Verdín José Antonio
+Ruiz López Jesús Amado
+Tolosa Franco César
+============================
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Simulación - Tarea 2</title>
+	<script type="text/javascript">
+	window.onload = function() {
+		document.getElementById("btn_generar").onclick = function() {
+			validar();
+		}
+		window.onkeyup = function(event) {
+			if (event.which == 13) {
+				validar();
+			}
+		}
+	}
+
+	function validar() {
+		var n = document.getElementById("txt_n").value;
+		if (!isNaN(n)) {
+			if (n <= 0)
+				alert("Error. El número debe ser mayor a cero.")
+			else
+				generarNumeros(n);
+		}
+		else
+			alert("Error. Debe proporcionar un número valido.");
+	}
+
+	function generarNumeros(n) {
+		if (document.getElementById("tabla"))
+			document.getElementById("tabla").remove();
+
+		var elem = document.createElement("div");
+		elem.id = "tabla";
+
+		var codigo = "<table border='1' cellpadding='10' cellspacing='0'>";
+		codigo += "<tbody>";
+		codigo += "<tr class='encabezado'>";
+		codigo += "<td><strong>#</strong></td><td><strong>VALOR</strong></td>";
+		codigo += "</tr>";
+
+		for (var i = 1; i<=n; i++) {
+			if (i%2 == 0)
+				codigo += "<tr class='resaltado'>";
+			else
+				codigo += "<tr>";
+			codigo += "<td>"+i+"</td>";
+			codigo += "<td>"+Math.floor(Math.random()*5001)+"</td>";
+			codigo += "</tr>";
+		}
+
+		codigo += "</tbody>";
+		codigo += "</table>";
+		elem.innerHTML = codigo;
+		document.getElementById("main").appendChild(elem);
+		alert("Se generaron: "+n+" números con éxito.");
+		document.getElementById("txt_n").value = "";
+	}
+	</script>
+	<style type="text/css">
+		#form {
+			width: 300px;
+			float: left;	
+		}
+
+		#main input {
+			padding: 5px;
+		}
+
+		#tabla {
+			float: left;
+			padding-top: 10px;
+			padding-left: 30px;
+		}
+
+		.encabezado {
+			color: #FFFFFF;
+			font-weight: bold;
+			background-color: #2C7499;
+		}
+
+		.resaltado {
+			background-color: #DEE5E8;
+		}
+	</style>
+</head>
+<body>
+	<h1>Tarea #02 de Simulación</h1>
+	<p>Programa para generar números pseudoaleatorios.</p>
+	<hr>
+	<div id="main">
+		<fieldset id="form">
+			<legend align="center"><strong>DATOS DE ENTRADA</strong></legend>
+			<label for="txt_n">Proporcione la cantidad de números pseudoaleatorios a generar:</label>
+			<br>
+			<input id="txt_n" type="number" autofocus>
+			<br>
+			<input id="btn_generar" type="button" value="Generar!">
+			<p>Ejemplo: <strong>25</strong></p>
+		</fieldset>
+	</div>
+</body>
+</html>
