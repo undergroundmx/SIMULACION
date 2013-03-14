@@ -62,7 +62,7 @@ Tolosa Franco César
 		}
 
 		function getLanzamiento(x, y) {
-			var H = (Math.pow(x, 2)+Math.pow(y, 2));
+			var H = Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2));
 			if (H <= 1)
 				return 1;
 			else
@@ -114,13 +114,14 @@ Tolosa Franco César
 			var codigo = "<fieldset>";
 			codigo += "<legend align='center'><strong>INFORMACION</strong></legend>";
 			codigo += "<p>";
+			codigo += "<strong>LANZAMIENTO</strong>";
 			codigo += "<ul>";
 			codigo += "<li>1 = ACIERTO</li>";
 			codigo += "<li>0 = FALLO</li>";
 			codigo += "</ul></p>";
 			codigo += "<p><ul><li>Total de lanzamientos: <strong>"+estado.length+"</strong></li>";
 			codigo += "<li>Total de aciertos: <strong>"+cont+"</strong></li>";
-			codigo += "<li>Valor aproximado de PI: <strong>"+PI+"</strong></li></ul></p>";
+			codigo += "<li>Valor aproximado de π: <strong>"+PI+"</strong></li></ul></p>";
 			codigo += "</fieldset>";
 			div.innerHTML = codigo;
 			document.getElementById("main").insertBefore(div, document.getElementById("tabla"))
