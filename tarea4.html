@@ -1,0 +1,183 @@
+<!--
+============================
+EQUIPO 2:
+Chávez Verdín José Antonio
+Ruiz López Jesús Amado
+Tolosa Franco César
+============================
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Simulación - Tarea 4</title>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+		google.load("visualization", "1.0", {"packages":["corechart"]});
+		google.load("visualization", "1.0", {"packages":["table"]});
+
+		window.onload = function() {
+			document.getElementById("btn_comenzar").onclick = function() {
+				validar();
+			}
+			
+			window.onkeyup = function(event) {
+				if (event.which == 13) {
+					validar();
+				}
+			}
+		}
+
+		function validar() {
+			var valor = document.getElementById("txt_n").value;
+			if (!isNaN(valor)) {
+				if (valor <= 0)
+					alert("La cantidad de dardos a lanzar, debe ser mayor a cero.");
+				else if (valor > 10000)
+					alert("La cantidad máxima de dardos a lanzar es de 10,000.");
+				else
+					simularLanzamientos(valor);
+			}
+			else
+				alert("Debe proporcionar un número válido.");
+		}
+
+		function simularLanzamientos(n) {
+			var signo = "";
+			var x = new Array();
+			var y = new Array();
+			var estado = new Array();
+
+			for (var i = 0; i<n; i++) {
+				signo = getSigno();
+				x[i] = generarCordenada(signo);
+				signo = getSigno();
+				y[i] = generarCordenada(signo);
+				estado[i] = getLanzamiento(x[i], y[i]);
+			}
+
+			dibujarTabla(x, y, estado);
+			dibujarGrafica(x, y, estado);
+			alert("Se generaron: "+n+" lanzamientos.");
+		}
+
+		function getLanzamiento(x, y) {
+			var H = (Math.pow(x, 2)+Math.pow(y, 2));
+			if (H <= 1)
+				return 1;
+			else
+				return 0;
+		}
+
+		function generarCordenada(signo) {
+			var valor = Math.random();
+			if (signo == "-")
+				valor *= -1;
+			return valor;
+		}
+
+		function getSigno() {
+			var valor = "";
+			var signo = Math.random();
+			if (signo < 0.5)
+				valor = "+";
+			else
+				valor = "-";
+			return valor;
+		}
+
+		function dibujarTabla(x, y, estado) {
+			var data = new google.visualization.DataTable();
+			data.addColumn("number", "X");
+			data.addColumn("number", "Y");
+			data.addColumn("number", "LANZAMIENTO");
+
+			var cont = 0;
+			for (var i=0; i<estado.length; i++) {
+				if (estado[i] == 1)
+					cont ++;
+				data.addRow([x[i], y[i], estado[i]]);
+			}
+			var opciones = {"title": "GRAFICA",
+							"width": 300,
+							"height": 700
+							};
+			var grafica = new google.visualization.Table(document.getElementById("tabla"));
+			grafica.draw(data, {showRowNumber: true});
+
+			var PI = (cont/estado.length)*4;
+
+			if (document.getElementById("leyenda"))
+				document.getElementById("leyenda").remove();
+			var div = document.createElement("div");
+			div.id = "leyenda";
+			var codigo = "<fieldset>";
+			codigo += "<legend align='center'><strong>INFORMACION</strong></legend>";
+			codigo += "<p>";
+			codigo += "<ul>";
+			codigo += "<li>1 = ACIERTO</li>";
+			codigo += "<li>0 = FALLO</li>";
+			codigo += "</ul></p>";
+			codigo += "<p><ul><li>Total de lanzamientos: <strong>"+estado.length+"</strong></li>";
+			codigo += "<li>Total de aciertos: <strong>"+cont+"</strong></li>";
+			codigo += "<li>Valor aproximado de PI: <strong>"+PI+"</strong></li></ul></p>";
+			codigo += "</fieldset>";
+			div.innerHTML = codigo;
+			document.getElementById("main").insertBefore(div, document.getElementById("tabla"))
+		}
+
+		function dibujarGrafica(x, y, estado) {
+			var colores = new Array();
+			var data = new google.visualization.DataTable();
+
+			data.addColumn("number", "")
+			data.addColumn("number", "Dardo fuera");
+			data.addColumn("number", "Dardo dentro");
+			data.addRows(estado.length);
+			for (var i=0; i<estado.length; i++) {
+				if (estado[i] == 0) {
+					data.setValue(i, 0, x[i]); 
+					data.setValue(i, 1, y[i]); 
+				}
+				else {
+					data.setValue(i, 0, x[i]); 
+					data.setValue(i, 2, y[i]); 
+				}
+			}
+			var opciones = {"title": "TABLERO",
+							"width": 700,
+							"height": 500,
+							series: {
+								0: {color: "red"},
+								1: {color: "blue"}
+							}
+							};
+			var grafica = new google.visualization.ScatterChart(document.getElementById("grafica"));
+			grafica.draw(data, opciones);
+		}
+	</script>
+	<style type="text/css">
+		#main { width: 500px; float: left; }
+		#grafica { width: 800px; margin-left: 500px; padding: 0; }
+		#tabla { padding: 10px 0; }
+	</style>
+</head>
+<body>
+	<h1>Tarea #04 de Simulación</h1>
+	<p><strong>Lanzamiento de Dardos</strong></p>
+	<p>Consiste en lanzar dardos a una hoja cuadrada que tenga circunscrito un círculo a una distancia de 2 mts.</p>
+	<hr>
+	<div id="main">
+		<fieldset>
+			<legend align="center"><strong>DATOS DE ENTRADA</strong></legend>
+			<label for="txt_n">Cantidad de dardos a lanzar:</label>
+			<br>
+			<input id="txt_n" type="number" autofocus>
+			<br>
+			<input id="btn_comenzar" type="button" value="Comenzar">
+		</fieldset>
+		<div id="tabla"></div>
+	</div>
+	<div id="grafica"></div>
+</body>
+</html>
