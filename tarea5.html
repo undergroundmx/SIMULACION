@@ -1,0 +1,192 @@
+<!--
+============================
+EQUIPO 2:
+Chávez Verdín José Antonio
+Ruiz López Jesús Amado
+Tolosa Franco César
+============================
+-->
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Simulación - Tarea 5</title>
+		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+		<script type="text/javascript">
+			google.load("visualization", "1.0", {"packages":["corechart"]});
+			google.load("visualization", "1.0", {"packages":["table"]});
+
+			window.onload = function() {
+				document.getElementById("btn_comenzar").onclick = function() {
+					validar();
+				}
+				window.onkeyup = function(event) {
+					if (event.which == 13) {
+						validar();
+					}
+				}
+
+				function validar() {
+					var valor = document.getElementById("txt_n").value;
+					if (!isNaN(valor)) {
+						if (valor <= 0)
+							alert("La cantidad de monedas a lanzar, debe ser mayor a cero.");
+						else if (valor > 10000)
+							alert("La cantidad máxima de monedas a lanzar es de 10,000.");
+						else
+							simularLanzamientos(valor);
+					}
+					else
+						alert("Debe proporcionar un número válido.");
+				}
+
+				function simularLanzamientos(n) {
+					var lado = new Array();
+					var num = 0;
+					var valor = "";
+
+					for (var i = 0; i<n; i++) {
+						valor = "";
+						num = Math.random();
+						if (num < 0.5)
+							valor = "CARA";
+						else
+							valor = "CRUZ";
+						lado[i] = valor;
+					}
+					generarProbabilidades(lado, n);
+				}
+
+				function generarProbabilidades(lado, n) {
+					var prob_cara = new Array();
+					var prob_cruz = new Array();
+
+					var cara = 0;
+					var cruz = 0;
+
+					var cont_cara = 0;
+					var cont_cruz = 0;
+
+					for (var i = 0; i<n; i++) {
+						if (lado[i] == "CARA")
+							cont_cara ++;
+						else if (lado[i] == "CRUZ")
+							cont_cruz ++;
+						cara = cont_cara/(i+1);
+						cruz = cont_cruz/(i+1);
+						prob_cruz[i] = cruz;
+						prob_cara[i] = cara;
+					}
+
+					dibujarTabla(lado, prob_cara, prob_cruz);
+					dibujarGrafica(lado, prob_cara, prob_cruz);
+					alert("Se generaron: "+n+" lanzamientos.");
+				}
+
+				function dibujarTabla(lado, prob_cara, prob_cruz) {
+					var data = new google.visualization.DataTable();
+					data.addColumn("string", "RESULTADO");
+					data.addColumn("number", "PROB. FRECUENCIAL CARA");
+					data.addColumn("number", "PROB. FRECUENCIAL CRUZ");
+
+					var cont = 0;
+					for (var i=0; i<lado.length; i++) {
+						if (lado[i] == "CARA")
+							cont ++;
+						data.addRow([lado[i], prob_cara[i], prob_cruz[i]]);
+					}
+					var opciones = {"title": "RESULTADOS",
+									"width": 300,
+									"height": 700
+									};
+					var grafica = new google.visualization.Table(document.getElementById("tabla"));
+					grafica.draw(data, {showRowNumber: true});
+
+					if (document.getElementById("leyenda"))
+						document.getElementById("leyenda").remove();
+					var div = document.createElement("div");
+					div.id = "leyenda";
+					var codigo = "<fieldset>";
+					codigo += "<legend align='center'><strong>INFORMACION</strong></legend>";
+					codigo += "<strong>LANZAMIENTOS</strong>";
+					codigo += "<p><ul><li>Total de lanzamientos: <strong>"+lado.length+"</strong></li>";
+					codigo += "<li>Veces que salió CARA: <strong>"+cont+"</strong></li>";
+					codigo += "<li>Veces que salió CRUZ: <strong>"+(lado.length-cont)+"</strong></li></ul></p>";
+					codigo += "<p>";
+					codigo += "<strong>PROBABILIDADES</strong>";
+					codigo += "<ul>";
+					codigo += "<li>Probabilidad de que salga CARA: <strong>"+cont/lado.length+"</strong></li>";
+					codigo += "<li>Probabilidad de que salga CRUZ: <strong>"+(lado.length-cont)/lado.length+"</strong></li>";
+					codigo += "</ul></p><p><div id='grafica2'></div></p>";
+					codigo += "</fieldset>";
+					div.innerHTML = codigo;
+					document.getElementById("main").insertBefore(div, document.getElementById("tabla"));
+					dibujarGrafica2(cont/lado.length, (lado.length-cont)/lado.length);
+				}
+
+				function dibujarGrafica(lado, prob_cara, prob_cruz) {
+					var data = new google.visualization.DataTable();
+
+					data.addColumn("number", "")
+					data.addColumn("number", "CARA");
+					data.addColumn("number", "CRUZ");
+					data.addRows(lado.length);
+					for (var i=0; i<lado.length; i++) {
+						data.setValue(i, 0, (i+1));	
+						data.setValue(i, 1, prob_cara[i]);
+						data.setValue(i, 0, (i+1)); 
+						data.setValue(i, 2, prob_cruz[i]); 
+					}
+					var opciones = {"title": "PROBABILIDADES",
+									"width": 700,
+									"height": 700,
+									series: {
+										0: {color: "red", pointSize: 1},
+										1: {color: "blue", pointSize: 1}
+									}
+									};
+					var grafica = new google.visualization.ScatterChart(document.getElementById("grafica"));
+					grafica.draw(data, opciones);
+				}
+
+				function dibujarGrafica2(prob_cara, prob_cruz) {
+					var data = google.visualization.arrayToDataTable([
+          				["", ""],
+          				["CARA", prob_cara],
+          				["CRUZ", prob_cruz]
+        			]);
+
+        			var opciones = {
+          				title: "PROBABILIDADES"
+        			};
+
+					var grafica = new google.visualization.PieChart(document.getElementById("grafica2"));
+					grafica.draw(data, opciones);
+				}
+			}
+		</script>
+		<style type="text/css">
+		#main { width: 500px; float: left; }
+		#grafica { width: 800px; margin-left: 500px; padding: 0; }
+		#tabla { padding: 10px 0; }
+		</style>
+	</head>
+	<body>
+		<h1>Tarea #05 de Simulación</h1>
+		<p><strong>Método de Montecarlo</strong></p>
+		<p>Reproducir mediante números pseudoaleatorios la tirada sucesiva de una moneda, debemos previamente asignarle un intervalo de números aleatorios a cara y otro a cruz.</p>
+		<hr>
+		<div id="main">
+			<fieldset>
+				<legend align="center"><strong>DATOS DE ENTRADA</strong></legend>
+				<label for="txt_n">Cantidad de monedas a lanzar:</label>
+				<br>
+				<input id="txt_n" type="number" autofocus>
+				<br>
+				<input id="btn_comenzar" type="button" value="Comenzar">
+			</fieldset>
+			<div id="tabla"></div>
+		</div>
+		<div id="grafica"></div>
+	</body>
+</html>
