@@ -20,6 +20,7 @@ Tolosa Franco César
 				document.getElementById("btn_comenzar").onclick = function() {
 					validar();
 				}
+
 				window.onkeyup = function(event) {
 					if (event.which == 13) {
 						validar();
@@ -54,10 +55,11 @@ Tolosa Franco César
 							valor = "CRUZ";
 						lado[i] = valor;
 					}
-					generarProbabilidades(lado, n);
+
+					generarProbabilidades(lado);
 				}
 
-				function generarProbabilidades(lado, n) {
+				function generarProbabilidades(lado) {
 					var prob_cara = new Array();
 					var prob_cruz = new Array();
 
@@ -67,7 +69,7 @@ Tolosa Franco César
 					var cont_cara = 0;
 					var cont_cruz = 0;
 
-					for (var i = 0; i<n; i++) {
+					for (var i = 0; i<lado.length; i++) {
 						if (lado[i] == "CARA")
 							cont_cara ++;
 						else if (lado[i] == "CRUZ")
@@ -80,7 +82,8 @@ Tolosa Franco César
 
 					dibujarTabla(lado, prob_cara, prob_cruz);
 					dibujarGrafica(lado, prob_cara, prob_cruz);
-					alert("Se generaron: "+n+" lanzamientos.");
+					alert("Se generaron: "+lado.length+" lanzamientos.");
+					document.getElementById("txt_n").value = "";
 				}
 
 				function dibujarTabla(lado, prob_cara, prob_cruz) {

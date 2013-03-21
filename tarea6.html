@@ -17,6 +17,7 @@ Tolosa Franco César
 				document.getElementById("btn_comenzar").onclick = function() {
 					validar();
 				}
+
 				window.onkeyup = function(event) {
 					if (event.which == 13) {
 						validar();
@@ -38,8 +39,6 @@ Tolosa Franco César
 				}
 
 				function simularDias(n) {
-					var valor;
-
 					crearTablaInformacion();
 
 					if (document.getElementById("tabla"))
@@ -53,6 +52,9 @@ Tolosa Franco César
 					codigo += "<tr class='encabezado'>";
 					codigo += "<td><strong>DÍA</strong></td><td><strong>NUM.- CONSULTAS</strong></td><td><strong>random()</strong></td>";
 					codigo += "</tr>";
+
+					var num = 0;
+					var valor = 0;
 
 					for (var i = 1; i<=n; i++) {
 						num = Math.random();
@@ -80,7 +82,7 @@ Tolosa Franco César
 					codigo += "</table>";
 					elem.innerHTML = codigo;
 					document.getElementById("cont_tabla").appendChild(elem);
-					alert("Se generaron: "+n+" días!");
+					alert("Se generaron: "+n+" días a simular.");
 					document.getElementById("txt_n").value = "";
 				}
 
