@@ -1,0 +1,124 @@
+<!--
+============================
+EQUIPO 2:
+Chávez Verdín José Antonio
+Ruiz López Jesús Amado
+Tolosa Franco César
+============================
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Simulación - Tarea 7</title>
+	<script type="text/javascript">
+	window.onload = function() {
+		document.getElementById("btn_generar").onclick = function() {
+			validar();
+		}
+		window.onkeyup = function(event) {
+			if (event.which == 13) {
+				validar();
+			}
+		}
+	}
+
+	function validar() {
+		var n = document.getElementById("txt_n").value;
+		if (!isNaN(n)) {
+			if (n <= 0)
+				alert("Error. El número de dados a lanzar debe ser mayor a cero.")
+			else
+				lanzarDados(n);
+		}
+		else
+			alert("Error. Debe proporcionar un número valido.");
+	}
+
+	function lanzarDados(n) {
+		if (document.getElementById("tabla"))
+			document.getElementById("tabla").remove();
+
+		var elem = document.createElement("div");
+		elem.id = "tabla";
+
+		var codigo = "<table border='1' cellpadding='10' cellspacing='0'>";
+		codigo += "<tbody>";
+		codigo += "<tr style='background: #c7ccbd;'>";
+		codigo += "<td><strong>N.-</strong></td><td></td>";
+		codigo += "</tr>";
+
+		var num = 0;
+		var valor = 0;
+		var imagen = "";
+
+		for (var i = 1; i<=n; i++) {
+			num = Math.random();
+			if (num >= 0 && num <= 0.050)
+				valor = 1;
+			else if (num >= 0.051 && num <= 0.150)
+				valor = 2;
+			else if (num >= 0.151 && num <= 0.350)
+				valor = 3;
+			else if (num >= 0.351 && num <= 0.650)
+				valor = 4;
+			else if (num >= 0.651 && num <= 0.850)
+				valor = 5;
+			else if (num >= 0.851 && num <= 1.00)
+				valor = 6;
+
+			codigo += "<tr>";
+			codigo += "<td><strong>"+i+"</strong></td>";
+			imagen = generarImagen(valor);
+			codigo += "<td>"+imagen+"</td>";
+			codigo += "</tr>";
+		}
+
+		codigo += "</tbody>";
+		codigo += "</table>";
+		elem.innerHTML = codigo;
+		document.getElementById("main").appendChild(elem);
+		alert("Se generaron: "+n+" lanzamientos.");
+		document.getElementById("txt_n").value = "";
+	}
+
+	function generarImagen(valor) {
+		switch (valor) {
+			case 1: return "<img src='DADO1.png'>";
+			case 2: return "<img src='DADO2.png'>";
+			case 3: return "<img src='DADO3.png'>";
+			case 4: return "<img src='DADO4.png'>";
+			case 5: return "<img src='DADO5.png'>";
+			case 6: return "<img src='DADO6.png'>";
+		}
+	}
+	</script>
+	<style type="text/css">
+		#form {
+			width: 300px;
+			float: left;	
+		}
+
+		#tabla {
+			float: left;
+			padding: 10px 30px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Tarea #07 de Simulación</h1>
+	<p>Simular el lanzamiento de un dado utilizando el Método de Montecarlo.</p>
+	<hr>
+	<div id="main">
+		<fieldset id="form">
+			<legend align="center"><strong>DATOS DE ENTRADA</strong></legend>
+			<label for="txt_n">Total de lanzamientos:</label>
+			<br>
+			<input id="txt_n" type="number" autofocus>
+			<br>
+			<input id="btn_generar" type="button" value="Lanzar">
+			<p>Ejemplo: <strong>60</strong></p>
+		</fieldset>
+	</div>
+</body>
+</html>
