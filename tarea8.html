@@ -1,0 +1,201 @@
+<!--
+============================
+EQUIPO 2:
+Chávez Verdín José Antonio
+Ruiz López Jesús Amado
+Tolosa Franco César
+============================
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Simulación - Tarea 8</title>
+	<script type="text/javascript">
+	var cartas, jugadores;
+	var obj_carta, obj_jugador;
+	var c;
+	var jganador, cganadora;
+
+	window.onload = function() {
+		document.getElementById("btn_jugar").onclick = function() {
+			validar();
+		}
+
+		window.onkeyup = function(event) {
+			if (event.which == 13) {
+				validar();
+			}
+		}
+	}
+
+	function validar() {
+		var n = document.getElementById("txt_n").value;
+		if (!isNaN(n)) {
+			if (n < 2 || n > 52)
+				alert("Error. El número de jugadores debe ser mayor de 1 y menor de 53.")
+			else
+				comenzarJuego(n);
+		}
+		else
+			alert("Error. Debe proporcionar un número valido.");
+	}
+
+	function comenzarJuego(n) {
+		c = 0;
+		jganador = 0;
+		cganadora = 0;
+		crearBaraja();
+		crearJugadores(n);
+	}
+
+	function crearJugadores(n) {
+		if (document.getElementById("tabla"))
+			document.getElementById("tabla").remove();
+
+		if (document.getElementById("info"))
+				document.getElementById("info").remove();
+
+		var elem = document.createElement("div");
+		elem.id = "tabla";
+
+		var codigo = "<table border='1' cellpadding='10' cellspacing='0'>";
+		codigo += "<tbody>";
+
+		for (var i = 1; i<=n; i++) {
+			codigo += "<tr>";
+			codigo += "<td><strong>JUGADOR "+i+"</strong> <input id='jugador"+i+"' type='button' value='Tomar carta' onclick='tomarCartaBaraja("+n+", "+i+");'></td>";
+			codigo += "<td><div id='cartaJugador"+i+"'></div></td>";
+			codigo += "</tr>";
+		}
+
+		codigo += "</tbody>";
+		codigo += "</table>";
+		elem.innerHTML = codigo;
+		document.getElementById("ctabla").appendChild(elem);
+		document.getElementById("txt_n").value = "";
+	}
+
+	function tomarCartaBaraja(total, id) {
+		if (document.getElementById("cartaJugador"+id).innerHTML)
+			return false;
+
+		jugadores = new Array(total);
+
+		var n = Math.floor(Math.random()*52);
+		while (cartas[n].uso) {
+			n = Math.floor(Math.random()*52);
+		}
+
+		obj_jugador = {
+			_id: id,
+			carta: cartas[n].valor
+		}
+
+		cartas[n].uso = true;
+		jugadores[c] = obj_jugador;
+
+		document.getElementById("cartaJugador"+jugadores[c]._id).innerHTML = "<img src='cartas/"+jugadores[c].carta+".png'>";
+
+		c++;
+
+		if (parseInt(cartas[n].valor) > cganadora) {
+			/*alert(cartas[n].valor+" es mayor que "+cganadora)*/
+			jganador = id;
+			cganadora = cartas[n].valor;
+			if (cganadora == 144)
+				c = total;
+		}
+
+		if (c == total) {
+			var elem = document.createElement("div");
+			elem.id = "info";
+
+			var codigo = "<strong>El ganador es el jugador "+jganador+"</strong><br>";
+			codigo += "<strong>CARTA GANADORA</strong><br>";
+			codigo += "<img src='cartas/"+cganadora+".png'>";
+
+			elem.innerHTML = codigo;
+			document.getElementById("main").appendChild(elem);
+			window.scrollTo(0, 0);
+		}
+	}
+
+	function crearBaraja() {
+		/*
+		generar cartas con un código
+
+		2 = 2
+		3 = 3
+		4 = 4
+		5 = 5
+		6 = 6
+		7 = 7
+		8 = 8
+		9 = 9
+		10 = 10
+		J = 11
+		Q = 12
+		k = 13
+		A = 14
+
+		Treboles = 1
+		Diamantes = 2
+		Corazones = 3
+		Picas = 4
+
+		Entonces, el código del AS de Picas sería: 144,
+		el código del Rey de Corazones sería: 133, etc.
+		*/
+		cartas = new Array(52);
+
+		var n = 2;
+		var cont = 0;
+		var palo = 1;
+
+		while (cont < 52) {
+			obj_carta = {
+				valor: n+""+palo,
+				uso: false
+			};
+			cartas[cont] = obj_carta;
+			cont ++;
+			n ++;
+			if (n > 14) {
+				n = 2;
+				palo ++;
+			}
+		}
+	}
+	</script>
+	<style type="text/css">
+		#main { width: 500px; float: left;}
+		#tabla { padding: 10px 0; }
+		#info { float: left; }
+	</style>
+</head>
+<body>
+	<h1>Tarea #08 de Simulación</h1>
+	<p>Simular el juego de cartas donde el jugador con la carta mayor gana.</p>
+	<strong>Valor de las cartas</strong>
+	<ul>
+		<li>Picas ♠</li>
+		<li>Corazones ♥</li>
+		<li>Diamantes ♦</li>
+		<li>Treboles ♣</li>
+	</ul>
+	<hr>
+	<div id="main">
+		<fieldset id="form">
+			<legend align="center"><strong>DATOS DE ENTRADA</strong></legend>
+			<label for="txt_n">Proporcione la cantidad de jugadores</label>
+			<br>
+			<input id="txt_n" type="number" placeholder="Cantidad de Jugadores" autofocus>
+			<br>
+			<input id="btn_jugar" type="button" value="Jugar">
+			<p>Ejemplo: <strong>4</strong></p>
+		</fieldset>
+	</div>
+	<div id="ctabla"></div>
+</body>
+</html>
