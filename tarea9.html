@@ -55,7 +55,7 @@ Tolosa Franco César
 			j3 = 0;
 			j4 = 0;
 			div = document.createElement("div");
-			codigo = "<hr><h3>SIMULACION #"+i+"</h3><hr><ul>";
+			codigo = "<hr><h3>SIMULACION #"+i+"</h3><hr>";
 			div.innerHTML = codigo;
 			document.getElementById("ctabla").appendChild(div);
 			
@@ -63,7 +63,7 @@ Tolosa Franco César
 				simularJuego(i, j, 4);
 
 			div = document.createElement("div");
-			codigo = "</ul><hr><h3>Juegos totales realizados: "+juegos+"</h3>";
+			codigo = "<h3>Juegos totales realizados: "+juegos+"</h3>";
 			codigo += "<ul><li><strong>Ganados jugador #01:</strong> "+j1;
 			codigo += "</li><li><strong>Ganados jugador #02:</strong> "+j2;
 			codigo += "</li><li><strong>Ganados jugador #03:</strong> "+j3;
@@ -103,16 +103,12 @@ Tolosa Franco César
 		}
 
 		if (c == total) {
-			var elem = document.createElement("li");
-			var codigo = "<strong>Ganador del juego #"+id_juego+": </strong>"+jganador;
 			switch (jganador) {
 				case 1: j1++; break;
 				case 2: j2++; break;
 				case 3: j3++; break;
 				case 4: j4++; break;
 			}
-			elem.innerHTML = codigo;
-			document.getElementById("ctabla").appendChild(elem);
 		}
 	}
 
