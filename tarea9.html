@@ -1,0 +1,189 @@
+<!--
+============================
+EQUIPO 2:
+Chávez Verdín José Antonio
+Ruiz López Jesús Amado
+Tolosa Franco César
+============================
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Simulación - Tarea 9</title>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script type="text/javascript">
+	google.load("visualization", "1.0", {"packages":["corechart"]});
+	
+	var cartas;
+	var obj_carta;
+	var c;
+	var jganador, cganadora;
+	var j1, j2, j3, j4;
+
+	window.onload = function() {
+		document.getElementById("btn_simular").onclick = function() {
+			validar();
+		}
+		window.onkeyup = function(event) {
+			if (event.which == 13) {
+				validar();
+			}
+		}
+	}
+
+	function validar() {
+		var n = document.getElementById("txt_n").value;
+		var juegos = document.getElementById("txt_juegos").value;
+		if (!isNaN(n) || !isNaN(juegos)) {
+			if (n <= 0 || juegos <= 0)
+				alert("Error. El número de simulaciones y de juegos debe ser mayor a cero.")
+			else
+				comenzarSimulacion(n, juegos);
+		}
+		else
+			alert("Error. Debe proporcionar un número valido.");
+	}
+
+	function comenzarSimulacion(n, juegos) {
+		var codigo;
+		var div;
+		for (var i = 1; i<=n; i++) {
+			j1 = 0;
+			j2 = 0;
+			j3 = 0;
+			j4 = 0;
+			div = document.createElement("div");
+			codigo = "<hr><h3>SIMULACION #"+i+"</h3><hr><ul>";
+			div.innerHTML = codigo;
+			document.getElementById("ctabla").appendChild(div);
+			
+			for (var j = 1; j<=juegos; j++)
+				simularJuego(i, j, 4);
+
+			div = document.createElement("div");
+			codigo = "</ul><hr><h3>Juegos totales realizados: "+juegos+"</h3>";
+			codigo += "<ul><li><strong>Ganados jugador #01:</strong> "+j1;
+			codigo += "</li><li><strong>Ganados jugador #02:</strong> "+j2;
+			codigo += "</li><li><strong>Ganados jugador #03:</strong> "+j3;
+			codigo += "</li><li><strong>Ganados jugador #04:</strong> "+j4;
+			codigo += "</li></ul><div id='grafica"+i+"'></div>";
+			div.innerHTML = codigo;
+			document.getElementById("ctabla").appendChild(div);
+			dibujarGrafica(i, juegos);
+		}
+	}
+
+	function simularJuego(id_sim, id_juego, jugadores) {
+		c = 0;
+		jganador = 0;
+		cganadora = 0;
+		crearBaraja();
+		for (var i = 1; i<=4; i++) {
+			tomarCartaBaraja(id_sim, id_juego, jugadores, i);
+		}
+	}
+
+	function tomarCartaBaraja(id_sim, id_juego, total, id) {
+		var n = Math.floor(Math.random()*52);
+		while (cartas[n].uso) {
+			n = Math.floor(Math.random()*52);
+		}
+
+		cartas[n].uso = true;	
+		c++;
+		
+		if (parseInt(cartas[n].valor) > cganadora) {
+			/*alert(cartas[n].valor+" es mayor que "+cganadora)*/
+			jganador = id;
+			cganadora = cartas[n].valor;
+			if (cganadora == 144)
+				c = total;
+		}
+
+		if (c == total) {
+			var elem = document.createElement("div");
+			var codigo = "<li><strong>Ganador del juego #"+id_juego+": </strong>"+jganador+"</li>";
+			switch (jganador) {
+				case 1: j1++; break;
+				case 2: j2++; break;
+				case 3: j3++; break;
+				case 4: j4++; break;
+			}
+			elem.innerHTML = codigo;
+			document.getElementById("ctabla").appendChild(elem);
+		}
+	}
+
+	function crearBaraja() {
+		cartas = new Array(52);
+
+		var n = 2;
+		var cont = 0;
+		var palo = 1;
+
+		while (cont < 52) {
+			obj_carta = {
+				valor: n+""+palo,
+				uso: false
+			};
+			cartas[cont] = obj_carta;
+			cont ++;
+			n ++;
+			if (n > 14) {
+				n = 2;
+				palo ++;
+			}
+		}
+	}
+
+	function dibujarGrafica(id, juegos) {
+		var data = google.visualization.arrayToDataTable([
+        	["", ""],
+        	["JUGADOR 1", j1/juegos],
+        	["JUGADOR 2", j2/juegos],
+        	["JUGADOR 3", j3/juegos],
+        	["JUGADOR 4", j4/juegos]
+        ]);
+
+        var opciones = {
+          	title: "PROBABILIDADES",
+          	height: 400,
+          	width: 600
+        };
+
+		var grafica = new google.visualization.PieChart(document.getElementById("grafica"+id));
+		grafica.draw(data, opciones);
+	}
+	</script>
+	<style type="text/css">
+		#main { width: 500px; }
+		#ctabla { padding: 10px 0; width: 500px; }
+	</style>
+</head>
+<body>
+	<h1>Tarea #09 de Simulación</h1>
+	<p>Simular N simulaciones de N juegos de cartas donde el jugador con la carta mayor gana. <strong>Comprobar probabilísticamente que cada jugador tiene la misma probabilidad de ganar.</strong></p>
+	<hr>
+	<div id="main">
+		<fieldset id="form">
+			<legend align="center"><strong>DATOS DE ENTRADA</strong></legend>
+			<label for="txt_n">Simulaciones a realizar:</label>
+			<br>
+			<input id="txt_n" type="number" placeholder="Simulaciones a realizar" autofocus>
+			<br>
+			<label for="txt_juegos">Juegos a realizar por Simulación:</label>
+			<br>
+			<input id="txt_juegos" type="number" placeholder="Juegos a realizar">
+			<br>
+			<input id="btn_simular" type="button" value="Simular">
+			<p>
+				Ejemplo:<br>
+				<strong>10 simulaciones</strong><br>
+				<strong>100 juegos por simulación</strong>
+			</p>
+		</fieldset>
+	</div>
+	<div id="ctabla"></div>
+</body>
+</html>
